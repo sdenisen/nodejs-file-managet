@@ -1,8 +1,10 @@
 import path from "path";
 import readline from "node:readline";
 import {fileURLToPath} from "url";
+import cmd_cd from "./cli/commands.js";
 
 const main_loop = () => {
+    let working_directory = "";
     let username = "";
     const cli_args = process.argv.slice(2); // common line argumets
 
@@ -34,18 +36,32 @@ const main_loop = () => {
 
     const command = () => {
         return new Promise((resolve) => {
-            const __filename = fileURLToPath(import.meta.url);
+            const __filename = working_directory? working_directory: fileURLToPath(import.meta.url);
             const path_to_working_directory = path.dirname(__filename);
             rl.question(`You are currently in ${path_to_working_directory} \n`, resolve);
+            working_directory = path_to_working_directory;
         });
     }
     (async function () {
         for (; true;) {
-            const new_cmd = (await command()).trim().toLowerCase();
-            if (new_cmd === ".exit") {
-                break;
+            // const new_cmd = (await command()).trim().toLowerCase();
+            const input = await command();
+            const [command_name, ...args] = input.trim().split(' ');
+            let exit_flag = false;
+            switch (command_name){
+                case ".exit":
+                    exit_flag = true;
+                    break;
+
+                case "cd":
+                    working_directory = cmd_cd(working_directory, args);
+                    break;
+
+                default:
+                    console.log("Invalid input");
             }
 
+            if (exit_flag) break;
         }
 
         console.log(`Thank you for using File Manager, ${username}, goodbye!`)
