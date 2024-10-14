@@ -25,6 +25,13 @@ const main_loop = () => {
         input: process.stdin,
         output: process.stdout
     });
+
+    rl.on('SIGINT', () => {
+        console.log(`Thank you for using File Manager, ${username}, goodbye!`)
+        rl.close();
+        process.exit(0);
+    });
+
     const command = () => {
         return new Promise((resolve) => {
             const __filename = fileURLToPath(import.meta.url);
@@ -34,12 +41,11 @@ const main_loop = () => {
     }
     (async function () {
         for (; true;) {
-            const new_cmd = await command();
-            console.log(new_cmd);
-            let cmd = new_cmd.trim().toLowerCase();
-            if (cmd === ".exit") {
+            const new_cmd = (await command()).trim().toLowerCase();
+            if (new_cmd === ".exit") {
                 break;
             }
+
         }
 
         console.log(`Thank you for using File Manager, ${username}, goodbye!`)
