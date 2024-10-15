@@ -1,7 +1,8 @@
 import path from "path";
 import readline from "node:readline";
 import {fileURLToPath} from "url";
-import cmd_cd from "./cli/commands.js";
+import {cmd_cd, cmd_ls} from "./cli/commands.js";
+// import cmd_ls from "./cli/commands.js";
 
 const main_loop = () => {
     let working_directory = "";
@@ -56,6 +57,11 @@ const main_loop = () => {
                 case "cd":
                     working_directory = cmd_cd(working_directory, args);
                     break;
+
+                case "ls":
+                    await cmd_ls(working_directory);
+                    break;
+
 
                 default:
                     console.log("Invalid input");

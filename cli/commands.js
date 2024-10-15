@@ -1,6 +1,7 @@
 import path from 'path';
+import { readdir } from "fs/promises";
 
-function cmd_cd(current_directory, args){
+export function cmd_cd(current_directory, args){
     // implement CD command.
     // parameter arguments= name_of_folder or ..(double dots)
     // without space.
@@ -17,4 +18,12 @@ function cmd_cd(current_directory, args){
     }
 }
 
-export default cmd_cd;
+export async function cmd_ls(working_directory){
+    const files = await readdir(working_directory, {withFileTypes: true});
+    files.forEach(file => {
+        if (file.isDirectory()){
+            console.log(`${file.name}/`);
+        }
+        else{ console.log(file.name) }
+    });
+}
