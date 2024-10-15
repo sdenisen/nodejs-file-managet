@@ -2,6 +2,7 @@ import path from "path";
 import readline from "node:readline";
 import {fileURLToPath} from "url";
 import {cmd_cd, cmd_ls, cmd_up} from "./core/navigation.js";
+import {cmd_cat} from "./core/filesystem.js";
 
 const main_loop = () => {
     let working_directory = "";
@@ -69,6 +70,10 @@ const main_loop = () => {
                     await cmd_ls(working_directory, args_filtered);
                     break;
 
+                case "cat":
+
+                    await cmd_cat(working_directory, args_filtered);
+                    break;
 
                 default:
                     console.log("Invalid input");

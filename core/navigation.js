@@ -16,7 +16,7 @@ export function cmd_cd(current_directory, args) {
         return current_directory
     }
 
-    if (args.length == 0) {
+    if (args.length === 0) {
         console.log("no any arguments passed")
         return current_directory
     }
@@ -34,6 +34,7 @@ export function cmd_cd(current_directory, args) {
 export async function cmd_ls(working_directory, args) {
     if (args.length > 1) {
         console.log("too many arguments");
+        return;
     }
 
     let directory_to_list = args.length === 0 ? working_directory : args[0];
