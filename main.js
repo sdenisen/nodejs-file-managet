@@ -1,8 +1,7 @@
 import path from "path";
 import readline from "node:readline";
 import {fileURLToPath} from "url";
-import {cmd_cd, cmd_ls} from "./cli/commands.js";
-// import cmd_ls from "./cli/commands.js";
+import {cmd_cd, cmd_ls, cmd_up} from "./core/navigation.js";
 
 const main_loop = () => {
     let working_directory = "";
@@ -47,13 +46,12 @@ const main_loop = () => {
         });
     }
     (async function () {
-        for (; true;) {
-            // const new_cmd = (await command()).trim().toLowerCase();
+        let exit_flag = false;
+        for (; exit_flag === false;) {
             const input = await command();
             const [command_name, ...args] = input.trim().split(' ');
             let args_filtered = args.filter(str => str.trim() !== "")
 
-            let exit_flag = false;
             switch (command_name){
                 case ".exit":
                     exit_flag = true;
@@ -61,6 +59,10 @@ const main_loop = () => {
 
                 case "cd":
                     working_directory = cmd_cd(working_directory, args_filtered);
+                    break;
+
+                case "up":
+                    working_directory = cmd_up(working_directory, args_filtered);
                     break;
 
                 case "ls":
@@ -71,8 +73,6 @@ const main_loop = () => {
                 default:
                     console.log("Invalid input");
             }
-
-            if (exit_flag) break;
         }
 
         console.log(`Thank you for using File Manager, ${username}, goodbye!`)
