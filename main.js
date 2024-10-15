@@ -37,10 +37,13 @@ const main_loop = () => {
 
     const command = () => {
         return new Promise((resolve) => {
-            const __filename = working_directory? working_directory: fileURLToPath(import.meta.url);
-            const path_to_working_directory = path.dirname(__filename);
-            rl.question(`You are currently in ${path_to_working_directory} \n`, resolve);
-            working_directory = path_to_working_directory;
+            if (!working_directory){
+                const __filename = fileURLToPath(import.meta.url);
+                const path_to_working_directory = path.dirname(__filename);
+                rl.question(`You are currently in ${path_to_working_directory} \n`, resolve);
+                working_directory = path_to_working_directory;
+            }
+            rl.question(`You are currently in ${working_directory} \n`, resolve);
         });
     }
     (async function () {
@@ -48,6 +51,8 @@ const main_loop = () => {
             // const new_cmd = (await command()).trim().toLowerCase();
             const input = await command();
             const [command_name, ...args] = input.trim().split(' ');
+            let args_filtered = args.filter(str => str.trim() !== "")
+
             let exit_flag = false;
             switch (command_name){
                 case ".exit":
@@ -55,11 +60,11 @@ const main_loop = () => {
                     break;
 
                 case "cd":
-                    working_directory = cmd_cd(working_directory, args);
+                    working_directory = cmd_cd(working_directory, args_filtered);
                     break;
 
                 case "ls":
-                    await cmd_ls(working_directory);
+                    await cmd_ls(working_directory, args_filtered);
                     break;
 
 
