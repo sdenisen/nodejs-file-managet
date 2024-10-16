@@ -3,7 +3,7 @@ import readline from "node:readline";
 import {fileURLToPath} from "url";
 import {cmd_cd, cmd_ls, cmd_up} from "./core/navigation.js";
 import {cmd_cat, cmd_add, cmd_rn, cmd_cp, cmd_mv, cmd_rm} from "./core/filesystem.js";
-import {cmd_hash} from "./cli/commands.js";
+import {cmd_hash, cmd_compress, cmd_decompress} from "./cli/commands.js";
 
 const main_loop = () => {
     let working_directory = "";
@@ -97,6 +97,14 @@ const main_loop = () => {
 
                 case "hash":
                     await cmd_hash(working_directory, args_filtered);
+                    break;
+
+                case "compress":
+                    await cmd_compress(working_directory, args_filtered);
+                    break;
+
+                case "decompress":
+                    await cmd_decompress(working_directory, args_filtered);
                     break;
 
                 default:
