@@ -2,7 +2,7 @@ import path from "path";
 import readline from "node:readline";
 import {fileURLToPath} from "url";
 import {cmd_cd, cmd_ls, cmd_up} from "./core/navigation.js";
-import {cmd_cat, cmd_add, cmd_rn, cmd_cp} from "./core/filesystem.js";
+import {cmd_cat, cmd_add, cmd_rn, cmd_cp, cmd_mv} from "./core/filesystem.js";
 
 const main_loop = () => {
     let working_directory = "";
@@ -84,6 +84,10 @@ const main_loop = () => {
 
                 case "cp":
                     await cmd_cp(working_directory, args_filtered);
+                    break;
+
+                case "mv":
+                    await cmd_mv(working_directory, args_filtered);
                     break;
 
                 default:

@@ -157,3 +157,68 @@ export async function cmd_cp(working_directory, args){
             console.log(error.message)
         });
 }
+
+export async function cmd_mv(working_directory, args){
+    // Move file (same as copy but initial file is deleted,
+    // copying part should be done using Readable and Writable streams):
+    // mv path_to_file path_to_new_directory
+
+     if (args.length > 2) {
+        console.log("Too many arguments");
+        return;
+    }
+
+    if (args.length < 2) {
+        console.log("Missed some required arguments")
+        return;
+    }
+
+    // parse arguments.
+    let is_error = false;
+    const source_path_to_file = args[0];
+    const destination_directory = args[1];
+    const destination_path_to_file = path.join(destination_directory, path.basename(source_path_to_file));
+
+    console.log(destination_path_to_file)
+    console.log(source_path_to_file)
+
+    await fsPromises.stat(source_path_to_file).catch(error => {
+        is_error = true;
+        console.log(`something go wrong ${error.message}`);
+    });
+    if (is_error) return;
+
+    await fsPromises.stat(destination_path_to_file).then(() => {
+        is_error = true;
+        console.log("The file already exist");
+    }).catch((error) => {
+        if (error.code !== "ENOENT"){
+            console.log(`something go wrong ${error.message}`)
+            Promise.reject();
+        }
+    });
+    if (is_error) return;
+
+    // move action.
+    const readStream = fs.createReadStream(source_path_to_file);
+    const writeStream = fs.createWriteStream(destination_path_to_file);
+
+    readStream.on('error', (error) => {
+        reject(`Error reading source file: ${error.message}`);
+    });
+    writeStream.on('error', (error) => {
+        reject(`Error writing destination file: ${error.message}`);
+    });
+
+    await writeStream.on('close', () => {
+            fs.unlink(source_path_to_file, (err) => {
+                if (err) {
+                    Promise.reject(`Error deleting source file: ${err.message}`);
+                } else {
+                    Promise.resolve('File moved successfully.');
+                }
+            });
+        });
+
+    await readStream.pipe(writeStream);
+}
