@@ -2,9 +2,11 @@ import path from 'path';
 import process from "node:process"
 import fs from 'node:fs';
 import fsPromises from 'fs/promises';
+import { constants } from 'fs';
 
 export async function cmd_cat(working_directory, args){
-
+    // Read file and print it's content in console (should be done using Readable stream):
+    // cat path_to_file
     if (args.length > 1) {
         console.log("too many arguments");
         return;
@@ -31,6 +33,8 @@ export async function cmd_cat(working_directory, args){
 
 
 export async function cmd_add(working_directory, args){
+    // Create empty file in current working directory:
+    // add new_file_name
 
     if (args.length > 1) {
         console.log("too many arguments");
@@ -60,6 +64,9 @@ export async function cmd_add(working_directory, args){
 }
 
 export async function cmd_rn(working_directory, args){
+    //Rename file (content should remain unchanged):
+    // rn path_to_file new_filename
+
     if (args.length > 2) {
         console.log("too many arguments");
         return;
@@ -102,4 +109,51 @@ export async function cmd_rn(working_directory, args){
             console.log(`${error.message}`);
         }
     });
+}
+
+export async function cmd_cp(working_directory, args){
+    //cp path_to_file path_to_new_directory
+    //Copy file (should be done using Readable and Writable streams):
+
+    if (args.length > 2) {
+        console.log("Too many arguments");
+        return;
+    }
+
+    if (args.length < 2) {
+        console.log("Missed some required arguments")
+        return;
+    }
+
+    // parse arguments.
+    let is_error = false;
+    const init_path_to_file = args[0];
+    const destination_directory = args[1];
+    const destination_path_to_file = path.join(destination_directory, path.basename(init_path_to_file));
+
+
+    await fsPromises.stat(init_path_to_file).catch(error => {
+        is_error = true;
+    });
+    if (is_error) return;
+
+    await fsPromises.stat(destination_directory).catch(error => {
+        is_error = true;
+        console.log(error.message);
+    });
+    if (is_error) return;
+
+    console.log("we are gete")
+    await fsPromises.copyFile(init_path_to_file, destination_path_to_file, constants.COPYFILE_EXCL)
+        .catch(error => {
+            if (error.code === "ERR_FS_CP_EEXIST") {
+                console.error("The file already exist");
+                Promise.reject();
+            }
+            if (error.code === "ENOENT") {
+              console.error(`Something go wrong ${error.message}`);
+              Promise.reject();
+            }
+            console.log(error.message)
+        });
 }
