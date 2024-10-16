@@ -4,6 +4,7 @@ import {fileURLToPath} from "url";
 import {cmd_cd, cmd_ls, cmd_up} from "./core/navigation.js";
 import {cmd_cat, cmd_add, cmd_rn, cmd_cp, cmd_mv, cmd_rm} from "./core/filesystem.js";
 import {cmd_hash, cmd_compress, cmd_decompress} from "./cli/commands.js";
+import {cmd_os} from "./core/operationsystem.js";
 
 const main_loop = () => {
     let working_directory = "";
@@ -19,11 +20,14 @@ const main_loop = () => {
             const value = key_value_pair[1];
             if ("--username" === key) {
                 username = value
-                console.log(`Welcome to the File Manager, ${username}!`);
             }
             i++;
         }
     }
+
+    const greeting = username? `Welcome to the File Manager, ${username}!`: `The name has not been provided!`
+    const goodbay = username? `Thank you for using File Manager, ${username}, goodbye!`: `Thank you for using File Manager!`
+    console.log(greeting);
 
     const rl = readline.createInterface({
         input: process.stdin,
@@ -31,7 +35,7 @@ const main_loop = () => {
     });
 
     rl.on('SIGINT', () => {
-        console.log(`Thank you for using File Manager, ${username}, goodbye!`)
+        console.log(goodbay);
         rl.close();
         process.exit(0);
     });
@@ -106,6 +110,10 @@ const main_loop = () => {
                 case "decompress":
                     await cmd_decompress(working_directory, args_filtered);
                     break;
+
+                case "os":
+                    await cmd_os(working_directory, args_filtered);
+                    break
 
                 default:
                     console.log("Invalid input");
