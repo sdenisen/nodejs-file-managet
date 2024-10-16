@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { pipeline } from 'node:stream/promises';
 import path from "path";
-import removeLastExtension from "./parser.js"
+import remove_last_extension from "./parser.js"
 
 export async function cmd_hash(working_directory, args){
     // Calculate hash for file and print it into console
@@ -103,7 +103,7 @@ export async function cmd_decompress(working_directory, args){
         console.log(`something go wrong ${error.message}`);
     });
 
-    let file_name = removeLastExtension(archive_path)
+    let file_name = remove_last_extension(archive_path)
     const output_file = path.join(output_path,  path.basename(file_name));
 
     // decompress action.

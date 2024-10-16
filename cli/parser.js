@@ -1,5 +1,5 @@
 import path from "path";
-function removeLastExtension(filePath) {
+function remove_last_extension(filePath) {
     const parsedPath = path.parse(filePath);
 
     if (parsedPath.ext) {
@@ -10,4 +10,4 @@ function removeLastExtension(filePath) {
     return path.format(parsedPath);
 }
 
-export default removeLastExtension;
+export default remove_last_extension;
