@@ -179,9 +179,6 @@ export async function cmd_mv(working_directory, args){
     const destination_directory = args[1];
     const destination_path_to_file = path.join(destination_directory, path.basename(source_path_to_file));
 
-    console.log(destination_path_to_file)
-    console.log(source_path_to_file)
-
     await fsPromises.stat(source_path_to_file).catch(error => {
         is_error = true;
         console.log(`something go wrong ${error.message}`);
@@ -222,3 +219,35 @@ export async function cmd_mv(working_directory, args){
 
     await readStream.pipe(writeStream);
 }
+
+
+export async function cmd_rm(working_directory, args){
+    // Delete file:
+    // rm path_to_file
+
+     if (args.length > 1) {
+        console.log("Too many arguments");
+        return;
+    }
+
+    if (args.length === 0) {
+        console.log("Missed some required arguments")
+        return;
+    }
+
+    // parse arguments.
+    let is_error = false;
+    const file_to_remove = args[0];
+
+    await fsPromises.stat(file_to_remove).catch(error => {
+        is_error = true;
+        console.log(`something go wrong ${error.message}`);
+    });
+    if (is_error) return;
+
+    // remove action.
+    await fsPromises.unlink(file_to_remove);
+}
+
+
+
